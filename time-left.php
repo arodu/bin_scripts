@@ -1,4 +1,5 @@
 #!/usr/bin/php
+
 <?php
   date_default_timezone_set('America/Caracas');
 
@@ -12,9 +13,8 @@
 
   echo "Time Left: ".$h."h ".$m."m\n";
    
-  // ---------------------  
+  // ---------------------
 
   $estimate = date("h:ia", time()+($time_left*60));
   echo "Estimate: ".$estimate;
 ?>
-
