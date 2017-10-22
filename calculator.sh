@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-echo $1 | bc -l
+echo "scale=4; $1" | bc -l
 
