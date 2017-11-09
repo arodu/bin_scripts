@@ -6,4 +6,3 @@ with urllib.request.urlopen("https://localbitcoins.com/bitcoinaverage/ticker-all
 	value = float(sys.argv[1]) * float(data["VEF"]["avg_1h"])
 	print("Price last 1h: "+'{:06.2f}'.format(float(data["VEF"]["avg_1h"])))
 	print("VEF: " + '{:06.2f}'.format(value))
-	

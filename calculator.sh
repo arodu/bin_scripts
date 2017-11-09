@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-echo "scale=4; $1" | bc -l
+presition=4
 
+echo "scale=$presition; "$@"" | bc -l

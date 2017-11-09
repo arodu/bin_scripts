@@ -2,23 +2,26 @@
 
 case "$1" in
 start)
-   echo "WebServer starting..."
+		echo "WebServer starting..."
 		systemctl start mysqld
 		systemctl start php-fpm
 		systemctl start httpd
-   ;;
+		echo "Started"
+	;;
 stop)
-   echo "WebServer stopping..."
+		echo "WebServer stopping..."
 		systemctl stop mysqld
 		systemctl stop php-fpm
 		systemctl stop httpd
-   ;;
+		echo "Stoped"
+	;;
 restart)
-   echo "WebServer restarting..."
+		echo "WebServer restarting..."
 		systemctl restart mysqld
 		systemctl restart php-fpm
 		systemctl restart httpd
-   ;;
+		echo "Restarted"
+	;;
 status)
 		echo "WebServer status..."
 		echo "  php-fpm: "$(systemctl status php-fpm | grep "Active" | sed 's/Active: //g')
