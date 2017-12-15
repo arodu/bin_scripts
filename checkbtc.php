@@ -27,9 +27,11 @@
 		}else if($argv[1] == 'btc' || $argv[1] == 'usd' || $argv[1] == 'vef'){
 			$json_result = json_decode(file_contents("https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/", true), true);
 			$lbtc = $json_result["VEF"]["avg_1h"];
+			$lbtc_24h = $json_result["VEF"]["avg_24h"];
 
 			$json_result = json_decode(file_contents("https://api.coinmarketcap.com/v1/ticker/bitcoin/", true), true);
 			$cmc = $json_result[0]["price_usd"];
+			$cmc_percent_change_24h = $json_result[0]["percent_change_24h"];
 
 			$json_result = json_decode(utf8_decode(file_get_contents("https://s3.amazonaws.com/dolartoday/data.json", true)), true);
 			$dt = $json_result["USD"]["dolartoday"];
@@ -52,16 +54,25 @@
 
 			}
 
+			$cmc_change = frmt_signal($cmc_percent_change_24h).'%';
+			$lbtc_change = frmt_signal((($lbtc - $lbtc_24h)*100)/$lbtc_24h).'%';
+			$dt_change = null;
+			$lbtc_usd_change = null;
+			//$lbtc_usd_change = frmt_signal($lbtc_24h/( $cmc - (($cmc_percent_change_24h * $cmc) / 100 )));
+
+
 			echo "<< ".date(DATE_RFC2822)." >>\n";
 			echo "\n";
-			echo "1 BTC = USD " . frmt($cmc) . " (CMC)\n";
-			echo "        VEF " . frmt($lbtc) . " (LBTC)\n";
-			echo "1 USD = VEF " . frmt($dt) . " (DT)\n";
-			echo "        VEF " . frmt($lbtc/$cmc) . " (LBTC/CMC)\n";
+			echo "1 BTC = USD " . frmt($cmc) . "\t\t".$cmc_change."\t(cmc)\n";
+			echo "        VEF " . frmt($lbtc) . "\t".$lbtc_change."\t(lbtc)\n";
+			echo "1 USD = VEF " . frmt($dt) . "\t\t".$dt_change."\t(dt)\n";
+			echo "        VEF " . frmt($lbtc/$cmc) . "\t\t".$lbtc_usd_change."\t(lbtc/cmc)\n";
 			echo "\n";
 			echo "CONVER. BTC ".frmt($valueBTC, 8)."\n";
 			echo "        USD ".frmt($valueUSD)."\n";
-			echo "        VEF ".frmt($valueVEF)."\n\n";
+			echo "        VEF ".frmt($valueVEF)."\n";
+			echo "\n";
+			echo "https://bitcoincalc.github.io/?".$argv[1]."=".$value."\n";
 
 		}else if($argv[1] == 'wallet'){
 			// check wallet 1KcQit8NSsqAeneSQG2emCtmog8dJpzv83
@@ -69,6 +80,67 @@
 			$balance = $sat*0.00000001;
 			echo system($argv[0].' btc '.$balance);
 
+		}else if($argv[1] == 'price'){
+
+			if(isset($argv[2]) && ($argv[2] == 'localbtc' || $argv[2] == 'localbitcoins' || $argv[2] == 'lbtc' )){
+				
+				$json_result = json_decode(file_contents("https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/", true), true);
+				$currency = (isset($argv[3]) ? $argv[3] : 'VEF');
+				$result = $json_result[$currency];
+				echo "<< ".date(DATE_RFC2822)." >>\n";
+				echo "\n";
+				echo "localbitcoins.com price [".$currency."]: \n";
+				echo "\tVolume BTC\t".@$result['volume_btc']."\n";
+				echo "\tavg 24h\t\t".@$result['avg_24h']."\n";
+				echo "\tavg 12h\t\t".@$result['avg_12h']."\n";
+				echo "\tavg 6h\t\t".@$result['avg_6h']."\n";
+				echo "\tavg 1h\t\t".@$result['avg_1h']."\n";
+				echo "\tlast rate\t".@$result['rates']['last']."\n";
+				echo "\n";
+
+			}else if(isset($argv[2]) && ($argv[2] == 'cmc' || $argv[2] == 'coinmarketcap')){
+				$currency = (isset($argv[3]) ? $argv[3] : 'bitcoin');
+
+				$json_result = json_decode(file_contents("https://api.coinmarketcap.com/v1/ticker/", true), true);
+				$data = null;
+				foreach($json_result as $result){
+					if($result['id'] == $currency || $result['symbol'] == $currency){
+						$data = $result;
+						break;
+					}
+				}
+				
+				if($data != null){
+					echo "<< ".date(DATE_RFC2822)." >>\n";
+					echo "\n";
+					echo "coinmarketcap.com price ".$data['name'].": \n";
+					echo "\tRank\t".@$data['rank']."\n";
+					echo "\tUSD\t".@$data['price_usd']."\n";
+					echo "\tBTC\t".@$data['price_btc']."\n";
+					echo "\t1h\t".@frmt_signal($data['percent_change_1h'])."%\n";
+					echo "\t24h\t".@frmt_signal($data['percent_change_24h'])."%\n";
+					echo "\t7d\t".@frmt_signal($data['percent_change_7d'])."%\n";
+					echo "\n";
+				}
+
+			}else if(isset($argv[2]) && ($argv[2] == 'dt' || $argv[2] == 'dolartoday')){
+				$data = json_decode(utf8_decode(file_get_contents("https://s3.amazonaws.com/dolartoday/data.json", true)), true);
+
+					echo "<< ".date(DATE_RFC2822)." >>\n";
+					echo "\n";
+					echo "dolartoday.com price: \n";
+					echo "\t\t\tdolar\t\teuro\n";
+					echo "\tdolartoday\t".@frmt($data['USD']['dolartoday'])."\t".@frmt($data['EUR']['dolartoday'])."\n";
+					echo "\timplicito\t".@frmt($data['USD']['efectivo'])."\t\t".@frmt($data['EUR']['efectivo'])."\n";
+					echo "\tdicom\t\t".@frmt($data['USD']['sicad2'])."\t".@frmt($data['EUR']['sicad2'])."\n";
+					echo "\tcucuta\t\t".@frmt($data['USD']['efectivo_cucuta'])."\t".@frmt($data['EUR']['efectivo_cucuta'])."\n";
+					echo "\n";
+				
+				
+			}else{
+				echo system($argv[0].' help');
+			}
+			
 		}else{
 			echo $argv[0]."\n";
 			echo "Usage:\n";
@@ -78,7 +150,8 @@
 			echo "\tfee\t\t\tcheck btc fee\n";
 			echo "\tfee [bytes]\t\tcheck btc fee for bytes\n";
 			echo "\twallet [public_key]\tpublic key from wallet or multiple public keys separated by pipe character \"|\"\n";
-			echo "\thelp\t\tthis message\n";
+			echo "\tprice [source]\t\tcheck prices for a diferent api (can be lbtc|cmc|dt)\n";
+			echo "\thelp\t\tthis message\n\n";
 
 		}
 
@@ -97,6 +170,16 @@
 
 	function frmt($number , $decimals = 2 , $dec_point = "." , $thousands_sep = ""){
 		return number_format($number, $decimals, $dec_point, $thousands_sep);
+	}
+
+	function frmt_signal($number){
+		if($number < 0){
+			return frmt($number);
+		}else if($number > 0){
+			return "+".frmt($number);
+		}else{
+			return "=".frmt($number);
+		}
 	}
 
 ?>
