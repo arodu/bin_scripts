@@ -12,9 +12,9 @@
 
   $time_left = ($days*$hpd*60)-$time;
   $h = (int)($time_left/60);
-  $m = $time_left - ($h*60);
+  $m = round($time_left - ($h*60));
 
-  echo "Time Left: ".$h."h ".$m."m\n";  
+  echo "Time Left: ".$h."h ".$m."m\n";
   // ---------------------
   $estimate = date("h:ia", time()+($time_left*60));
   echo "Estimate: ".$estimate."\n";
