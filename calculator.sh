@@ -2,4 +2,4 @@
 
 presition=4
 
-echo "scale=$presition; "$@"" | bc -l
+echo \t"scale=$presition; "$@"" | bc -l
