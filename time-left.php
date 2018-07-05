@@ -6,7 +6,7 @@
   // argv[2]: dias a calcular, o dias del mes, por defecto 1
   // argv[3]: horas por dia, por defecto 8
 
-  $time = $argv[1];
+  $time = eval('return '.$argv[1].';');
   $days = (isset($argv[2]) ? $argv[2] : 1);
   $hpd = (isset($argv[3]) ? $argv[3] : 8);
 
