@@ -149,7 +149,8 @@
 			$currency = (!empty($argv[2]) ? strtoupper($argv[2]) : 'VES');
 
 			foreach ($result as $item) {
-				list($data['code'],$data['name'],$data['method'],$data['category'],$data['rate'],$data['buy'],$data['sell']) = explode(',', $item);
+				$keys = array('code', 'name', 'method', 'category', 'rate', 'buy', 'sell');
+				$data = array_combine( $keys, explode(',', $item));
 				if($data['code'] == $currency){
 					break;
 				}
