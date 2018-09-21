@@ -10,24 +10,16 @@
   $por = (isset($argv[2]) ? $argv[2] : 5.40)/100;
   $com = (isset($argv[3]) ? $argv[3] : 0.30);
 
-  // Para recibir
+  $enviar = ($com + $monto)/(1-$por);
 
-  //$calculo_1 = ($monto*$por)/100 + $com;
-  // m = (r-c)/(1-p)
-  //$enviar = ($monto-$com)/(1-$por);
-
-  $calculo_2 = ($monto*$por) + $com;
-
-  //echo $por."\n";
-  //echo $com."\n";
-  //echo $calculo."\n";
+  $calculo = ($monto*$por) + $com;
 
   echo "     Para recibir: $ ".round($monto,2)."\n";
   echo "La comision es de: $ ".round($enviar-$monto,2)."\n";
   echo "   Hay que enviar: $ ".round($enviar, 2)."\n";
   echo "-----------------------------------\n";
   echo "     Si se envian: $ ".round($monto,2)."\n";
-  echo "La comision es de: $ ".round($calculo_2,2)."\n";
-  echo "       Se reciben: $ ".round($monto-$calculo_2, 2)."\n";
+  echo "La comision es de: $ ".round($calculo,2)."\n";
+  echo "       Se reciben: $ ".round($monto-$calculo, 2)."\n";
 
 ?>

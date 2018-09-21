@@ -142,6 +142,26 @@
 				echo system($argv[0].' help');
 			}
 
+
+		}else if($argv[1] == 'airtm'){
+
+			$result = explode("\n", file_contents("http://ec2-18-222-4-55.us-east-2.compute.amazonaws.com:8000/rates", true));
+			$currency = (!empty($argv[2]) ? strtoupper($argv[2]) : 'VES');
+
+			foreach ($result as $item) {
+				list($data['code'],$data['name'],$data['method'],$data['category'],$data['rate'],$data['buy'],$data['sell']) = explode(',', $item);
+				if($data['code'] == $currency){
+					break;
+				}
+			}
+
+			echo "<< ".date(DATE_RFC2822)." >>\n";
+			echo "\n";
+			echo "airtm.io price: \n";
+			echo "".$data['name'];
+			echo "\tUSD ".@frmt($data['rate'])."\n";
+			echo "\n";
+
 		}else{
 			echo $argv[0]."\n";
 			echo "Usage:\n";
@@ -152,6 +172,7 @@
 			echo "\tfee [bytes]\t\tcheck btc fee for bytes\n";
 			echo "\twallet [public_key]\tpublic key from wallet or multiple public keys separated by pipe character \"|\"\n";
 			echo "\tprice [source]\t\tcheck prices for a diferent api (can be lbtc|cmc|dt)\n";
+			echo "\tairtm [currency]\t\tcheck AirTM prices\n";
 			echo "\thelp\t\tthis message\n\n";
 
 		}
