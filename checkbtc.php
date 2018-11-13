@@ -12,9 +12,9 @@
 			if(isset($argv[2])){
 				$bytes = $argv[2];
 				echo "for ".$bytes."bytes\n";
-				echo "\tfastest Fee: BTC ".(0.00000001*$btcfee['fastestFee']*$bytes)." (".$btcfee['fastestFee']." sat/byte)\n";
-				echo "\t30min Fee:   BTC ".(0.00000001*$btcfee['halfHourFee']*$bytes)." sat (".$btcfee['halfHourFee']." sat/byte)\n";
-				echo "\t1hour Fee:   BTC ".(0.00000001*$btcfee['hourFee']*$bytes)." sat (".$btcfee['hourFee']." sat/byte)\n";
+				echo "\tfastest Fee: BTC ".number_format(0.00000001*$btcfee['fastestFee']*$bytes, 8)." BTC [".$btcfee['fastestFee']." sat/byte]\n";
+				echo "\t30min Fee:   BTC ".number_format(0.00000001*$btcfee['halfHourFee']*$bytes, 8)." BTC [".$btcfee['halfHourFee']." sat/byte]\n";
+				echo "\t1hour Fee:   BTC ".number_format(0.00000001*$btcfee['hourFee']*$bytes, 8)." BTC [".$btcfee['hourFee']." sat/byte]\n";
 			}else{
 				echo "\n";
 				echo "\tfastest Fee: ".$btcfee['fastestFee']." sat/byte\n";
@@ -145,7 +145,7 @@
 
 		}else if($argv[1] == 'airtm'){
 
-			$result = explode("\n", file_contents("http://ec2-18-222-4-55.us-east-2.compute.amazonaws.com:8000/rates", true));
+			$result = explode("\n", file_contents("https://airtmrates.com/rates", true));
 			$currency = (!empty($argv[2]) ? strtoupper($argv[2]) : 'VES');
 
 			foreach ($result as $item) {
@@ -159,7 +159,7 @@
 			echo "<< ".date(DATE_RFC2822)." >>\n";
 			echo "\n";
 			echo "airtm.io price: \n";
-			echo "".$data['name'];
+			echo "\t".$data['name']."\n";
 			echo "\tUSD ".@frmt($data['rate'])."\n";
 			echo "\n";
 
