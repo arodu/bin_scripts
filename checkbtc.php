@@ -26,7 +26,11 @@
 
 		}else if($argv[1] == 'btc' || $argv[1] == 'usd' || $argv[1] == 'ves'){
 			$json_result = json_decode(file_contents("https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/", true), true);
-			$lbtc = $json_result["VES"]["avg_1h"];
+			$v = $json_result["VES"];
+
+			$lbtc = (isset($v['avg_1h']) ? $v['avg_1h'] : (isset($v['avg_6h']) ? $v['avg_6h'] : ( isset($v['avg_12h']) ? $v['avg_12h'] : ( isset($v['avg_24h']) ? $v['avg_12h'] : NULL ) ) ) );
+
+			//$json_result["VES"]["avg_1h"];
 			$lbtc_24h = $json_result["VES"]["avg_24h"];
 
 			$json_result = json_decode(file_contents("https://api.coinmarketcap.com/v1/ticker/bitcoin/", true), true);
@@ -36,7 +40,9 @@
 			$json_result = json_decode(utf8_decode(file_get_contents("https://s3.amazonaws.com/dolartoday/data.json", true)), true);
 			$dt = $json_result["USD"]["dolartoday"];
 
-			$value = $argv[2];
+			$airtm = check_airtm('VES');
+
+			$value = isset($argv[2]) ? $argv[2] : 0;
 			if($argv[1] == 'btc'){
 				$valueBTC = $value;
 				$valueUSD = $value*$cmc;
@@ -66,8 +72,9 @@
 			echo "1 BTC = USD " . frmt($cmc) . "\t".$cmc_change."\t(cmc)\n";
 			echo "        VES " . frmt($lbtc) . "\t".$lbtc_change."\t(lbtc)\n";
 			echo "\n";
-			echo "1 USD = VES " . frmt($dt) . "\t".$dt_change."\t(dt)\n";
-			echo "        VES " . frmt($lbtc/$cmc) . "\t".$lbtc_usd_change."\t(lbtc/cmc)\n";
+			echo "1 USD = VES " . frmt($dt) . "\t\t(dt)\n";
+			echo "        VES " . @frmt($airtm['rate']) . "\t\t(airtm)\n";
+			echo "        VES " . frmt($lbtc/$cmc) . "\t\t(lbtc/cmc)\n";
 			echo "\n";
 			echo "CONVER. BTC ".frmt($valueBTC, 8)."\n";
 			echo "        USD ".frmt($valueUSD)."\n";
@@ -144,17 +151,9 @@
 
 
 		}else if($argv[1] == 'airtm'){
-
-			$result = explode("\n", file_contents("https://airtmrates.com/rates", true));
 			$currency = (!empty($argv[2]) ? strtoupper($argv[2]) : 'VES');
 
-			foreach ($result as $item) {
-				$keys = array('code', 'name', 'method', 'category', 'rate', 'buy', 'sell');
-				$data = array_combine( $keys, explode(',', $item));
-				if($data['code'] == $currency){
-					break;
-				}
-			}
+			$data = check_airtm($currency);
 
 			echo "<< ".date(DATE_RFC2822)." >>\n";
 			echo "\n";
@@ -203,6 +202,20 @@
 		}else{
 			return " ".frmt($number, $decimals);
 		}
+	}
+
+	function check_airtm($currency = 'VES'){
+		$result = explode("\n", file_contents("https://airtmrates.com/rates", true));
+
+		foreach ($result as $item) {
+			$keys = array('code', 'name', 'method', 'category', 'rate', 'buy', 'sell');
+			$data = array_combine( $keys, explode(',', $item));
+			if($data['code'] == $currency){
+				break;
+			}
+		}
+
+		return $data;
 	}
 
 ?>

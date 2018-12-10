@@ -3,7 +3,7 @@
   date_default_timezone_set('America/Caracas');
 
   // argv[1]: tiempo guardado en minutos
-  // argv[2]: pago por hora
+  // argv[2]: pago por hora (default: 2.19)
 
   $time = eval('return '.(isset($argv[1])?$argv[1]:0).';');
   $ph = (isset($argv[2]) ? $argv[2] : 2.19);

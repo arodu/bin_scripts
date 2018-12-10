@@ -2,11 +2,22 @@
 <?php
   date_default_timezone_set('America/Caracas');
 
-  // argv[1]: tiempo guardado en minutos
+  // argv[1]: tiempo guardado en minutos, o en formato HH:MM
   // argv[2]: dias a calcular, o dias del mes, por defecto 1
   // argv[3]: horas por dia, por defecto 8
 
-  $time = eval('return '.(isset($argv[1])?$argv[1]:0).';');
+  if(preg_match("/[0-9]*[0-9]+:[0-5]+[0-9]+/", $argv[1])){
+    list($ht, $mt) = explode(":", $argv[1]);
+    $time = ($ht*60)+$mt;
+  }else{
+    if(strpos($argv[1], ':')){
+      echo "Syntax error! is not a valid time format [".$argv[1]."]\n";
+      exit();
+    }else{
+      $time = eval('return '.(isset($argv[1])?$argv[1]:0).';');
+    }
+  }
+
   $days = (isset($argv[2]) ? $argv[2] : 1);
   $hpd = (isset($argv[3]) ? $argv[3] : 8);
 
