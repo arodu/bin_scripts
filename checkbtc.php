@@ -43,21 +43,20 @@
 			$airtm = check_airtm('VES');
 
 			$value = isset($argv[2]) ? $argv[2] : 0;
-			if($argv[1] == 'btc'){
-				$valueBTC = $value;
-				$valueUSD = $value*$cmc;
-				$valueVES = $value*$lbtc;
-
-			}else if($argv[1] == 'usd'){
-				$valueBTC = $value/$cmc;
-				$valueUSD = $value;
-				$valueVES = $value*$dt;
-
-			}else if($argv[1] == 'ves'){
-				$valueBTC = $value/$lbtc;
-				$valueUSD = $value/$dt;
-				$valueVES = $value;
-
+			if($value > 0){
+				if($argv[1] == 'btc'){
+					$valueBTC = $value;
+					$valueUSD = $value*$cmc;
+					$valueVES = $value*$lbtc;
+				}else if($argv[1] == 'usd'){
+					$valueBTC = $value/$cmc;
+					$valueUSD = $value;
+					$valueVES = $value*$dt;
+				}else if($argv[1] == 'ves'){
+					$valueBTC = $value/$lbtc;
+					$valueUSD = $value/$dt;
+					$valueVES = $value;
+				}
 			}
 
 			$cmc_change = frmt_signal($cmc_percent_change_24h, 1).'%';
@@ -76,11 +75,16 @@
 			echo "        VES " . @frmt($airtm['rate']) . "\t\t(airtm)\n";
 			echo "        VES " . frmt($lbtc/$cmc) . "\t\t(lbtc/cmc)\n";
 			echo "\n";
-			echo "CONVER. BTC ".frmt($valueBTC, 8)."\n";
-			echo "        USD ".frmt($valueUSD)."\n";
-			echo "        VES ".frmt($valueVES)."\n";
-			echo "\n";
-			echo "https://bitcoincalc.github.io/?".$argv[1]."=".$value."\n";
+			if($value > 0){
+				echo "CONVER. BTC ".frmt($valueBTC, 8)."\n";
+				echo "        USD ".frmt($valueUSD)."\n";
+				echo "        VES ".frmt($valueVES)."\n";
+				echo "\n";
+				echo "https://bitcoincalc.github.io/?".$argv[1]."=".$value."\n";
+			}else{
+				echo "https://bitcoincalc.github.io/\n";
+			}
+
 
 		}else if($argv[1] == 'wallet'){
 			// check wallet 1KcQit8NSsqAeneSQG2emCtmog8dJpzv83
