@@ -122,7 +122,7 @@
 					}
 				}
 
-				if($data != null){
+				if(!empty($data)){
 					echo "<< ".date(DATE_RFC2822)." >>\n";
 					echo "\n";
 					echo "coinmarketcap.com price ".$data['name'].": \n";
@@ -165,6 +165,33 @@
 			echo "\t".$data['name']."\n";
 			echo "\tUSD ".@frmt($data['rate'])."\n";
 			echo "\n";
+
+		}else if($argv[1] == 'uphold'){
+			$result = json_decode(utf8_decode(file_get_contents("https://api.uphold.com/v0/ticker/USD", true)), true);
+
+			foreach ($result as $data) {
+				if($data['pair'] == 'BTCUSD') break;
+			}
+
+			$price = ($data['bid']+$data['ask'])/2;
+
+			echo "<< ".date(DATE_RFC2822)." >>\n";
+			echo "\n";
+			echo "uphold.com price BTC:\n";
+			echo "\tUSD  ".frmt($price)."\n";
+			echo "\n";
+			if(!empty($argv[2])){
+				$value = $argv[2];
+				echo "\tBTC  ".frmt($value, 8)."\n";
+				echo "\tUSD  ".frmt($price*$value, 2)."\n";
+				echo "\n";
+			}
+
+			if(!empty($out)){
+				return $out;
+			}else{
+				return "Not found!";
+			}
 
 		}else{
 			echo $argv[0]."\n";

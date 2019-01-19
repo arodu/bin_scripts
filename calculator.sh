@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-presition=4
+presition=4;
 
-echo \t"scale=$presition; "$@"" | bc -l
+export M="$(echo "scale=$presition; "$@"" | bc -l)"
+echo $M
+
+
