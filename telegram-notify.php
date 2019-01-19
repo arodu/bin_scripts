@@ -2,7 +2,7 @@
 <?php
 // $apiToken = "";
 // $chats = []    // chat_id list
-include_once("../.telegram_notify_config.php");
+require_once(exec('echo $HOME').'/.telegram_notify_config.php');
 
 if(isset($argv[1])){
   foreach ($chats as $chat_id) {
