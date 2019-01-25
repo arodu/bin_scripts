@@ -5,11 +5,15 @@
 require_once(exec('echo $HOME').'/.telegram_notify_config.php');
 
 if(isset($argv[1])){
+  $msg = "🖥 <i>".exec('echo $(whoami)@$(hostname)').":</i>\n".$argv[1];
+
+
+
   foreach ($chats as $chat_id) {
     $formatMessage = [
       'chat_id' => $chat_id,
       'parse_mode' => 'HTML',
-      'text' => $argv[1],
+      'text' => $msg,
       'disable_web_page_preview'=>true,
     ];
 
