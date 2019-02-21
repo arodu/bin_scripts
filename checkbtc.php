@@ -40,7 +40,11 @@
 			$json_result = json_decode(utf8_decode(file_get_contents("https://s3.amazonaws.com/dolartoday/data.json", true)), true);
 			$dt = $json_result["USD"]["dolartoday"];
 
-			$airtm = check_airtm('VES');
+			try {
+				$airtm = check_airtm('VES');
+			} catch (\Exception $e) {
+				$airtm = null;
+			}
 
 			$value = isset($argv[2]) ? $argv[2] : 0;
 			if($value > 0){
@@ -222,7 +226,10 @@
 	}
 
 	function frmt($number , $decimals = 2 , $dec_point = "." , $thousands_sep = ""){
-		return number_format($number, $decimals, $dec_point, $thousands_sep);
+		if(!empty($number)){
+			return number_format($number, $decimals, $dec_point, $thousands_sep);
+		}
+		return '[error]';
 	}
 
 	function frmt_signal($number, $decimals = 2){
