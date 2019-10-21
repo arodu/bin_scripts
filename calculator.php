@@ -6,11 +6,13 @@ session_start();
 $comm = array_shift($argv);
 $exp  = implode($argv);
 
-$M = (isset($_SESSION['m']) ? $_SESSION['m'] : null);
+if(isset($_SESSION['m'])){
+  $exp = str_replace("m", $_SESSION['m'], $exp);
+}
 
-$exp = str_replace("m", $M, $exp);
 
 $_SESSION['m'] = eval("return ".$exp.";");
+
 echo "> ".$_SESSION['m']."\n";
 
 ?>
