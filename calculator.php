@@ -13,6 +13,6 @@ if(isset($_SESSION['m'])){
 
 $_SESSION['m'] = eval("return ".$exp.";");
 
-echo "> ".$_SESSION['m']."\n";
+echo "= ".$_SESSION['m']."\n";
 
 ?>
