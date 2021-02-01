@@ -30,7 +30,7 @@ status)
 		# echo "  php-fpm: "$(systemctl status php-fpm | grep "Active" | sed 's/Active: //g')
 		echo "  MySql:  "$(systemctl status mysqld | grep "Active" | sed 's/Active: //g')
 		echo "  Apache: "$(systemctl status httpd | grep "Active" | sed 's/Active: //g')
-   ;;
+	;;
 *)
    echo "Usage: $0 {start|stop|status|restart}"
 esac

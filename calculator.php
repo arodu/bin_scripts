@@ -3,16 +3,29 @@
 session_id('mhh2i409cdadq9dg3rdqir3hsl');
 session_start();
 
-$comm = array_shift($argv);
-$exp  = implode($argv);
+$comm = array_shift($argv); // remote first element
+$exp  = implode($argv); 
 
-if(isset($_SESSION['m'])){
-  $exp = str_replace("m", $_SESSION['m'], $exp);
-}
+echo "= ".eval_expretion($exp)."\n";
+
+// - being: functions
+  function eval_expretion($exp){
+    $exp = load_memory($exp);
+    $out = eval("return ".$exp.";");
+    save_memory($out);
+    return $out;
+  }
 
 
-$_SESSION['m'] = eval("return ".$exp.";");
+  function load_memory($exp){
+    if(isset($_SESSION['m'])){
+      $exp = str_replace("m", $_SESSION['m'], $exp);
+    }
+    return $exp;
+  }
 
-echo "= ".$_SESSION['m']."\n";
-
+  function save_memory($data){
+    $_SESSION['m'] = $data;
+  }
+// - end: functions
 ?>
